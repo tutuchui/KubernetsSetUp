@@ -411,6 +411,46 @@ public String sendResponse(@RequestParam("userName") String userName){
 
 "Receive Message From Yutong".
 
+### 4. Scale the Application
+
+参考文档：https://kubernetes.io/zh/docs/tutorials/kubernetes-basics/scale/scale-interactive/
+
+**Checking the current pod of a specific application**
+
+```bash
+kubectl get pods -l=app=[application-name]
+## kubectl get pods -l=app=decision-demo
+```
+
+**改变application的使用的Pods的数量**
+
+```bash
+kubectl scale deployments/[deployment-name] --replicas=#number-of-replicas
+# kubectl scale deployments/api-gateway-demo --replicas=4
+```
+
+**Create an auto scale controller for a deployment**
+
+```bash
+kubectl autoscale deployment api-gateway-demo --min=#min_number --max=max_number
+### kubectl autoscale deployment api-gateway-demo --min=6 --max=10
+```
+
+**Edit existed auto scale controller**
+
+```bash
+kubectl edit hpa [hpa-name]
+### kubectl edit hpa api-gateway-demo
+```
+
+**Check the log of a specific pod**
+
+```bash
+kubectl logs [pod-name]
+
+## kubectl logs api-gateway-demo-68454697d8-9gsvk
+```
+
 
 
 ### A. [Optioanal]使用本地Terminal连接虚拟机实例（Mac OS）
