@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-demo
+  labels:
+    app: api-gateway-demo
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway-demo
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: api-gateway-demo
+    spec:
+      containers:
+        - name: api-gateway-demo
+          image: api-gateway-demo:1.0
+          ports:
+            - containerPort: 8080

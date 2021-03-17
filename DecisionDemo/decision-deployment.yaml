@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decision-demo
+  labels:
+    app: decision-demo
+spec:
+  selector:
+    matchLabels:
+      app: decision-demo
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: decision-demo
+    spec:
+      containers:
+        - name: decision-demo
+          image: decision-demo:1.0
+          ports:
+            - containerPort: 9898
