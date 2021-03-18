@@ -11,7 +11,8 @@ import java.net.URL;
 public class ApiGatewayController {
     @GetMapping("/")
     public String testExternal(){
-        return "This is the exposed API gateway application";
+        String host = System.getenv("HOSTNAME");
+        return "Hello API Gateway Demo, running on " + host;
     }
 
     @GetMapping("/helloDecision")
