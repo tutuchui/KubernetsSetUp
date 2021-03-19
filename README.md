@@ -304,13 +304,17 @@ spec:
   selector:
     app: api-gateway-demo
   ports:
-    # 默认情况下，为了方便起见，`targetPort` 被设置为与 `port` 字段相同的值。
+  		#在集群内部，这个service在哪个port对外暴露
     - port: 8080
+    	# 对应的pod expose在哪个端口，与deployment.yaml中container port相对应
       targetPort: 8080
       #声明node port被分配的端口号
       #默认情况下，为了方便起见，Kubernetes 控制平面会从某个范围内分配一个端口号（默认：30000-32767）
+      # Which port on the node is the service available through
       nodePort: 30940
 ```
+
+service yaml中spec.selector.app的名字必须和deployment.yaml中定义的spec.template.labels.app名字保持一致，service.yaml正是通过这个selector来决定将请求交给哪一个pod来处理。
 
 - 应用deployment.yaml和service.yaml文件
 
@@ -393,8 +397,6 @@ public String helloDecision() throws IOException {
 }
 ```
 
-
-
 Decision-Demo中的代码
 
 ```java
@@ -452,6 +454,29 @@ kubectl logs [pod-name]
 ```
 
 
+
+### 5. Kubernets Services
+
+Kubernets中使用Pods来承载我们的我docker image instance (i.e., container)。**而如果需要对外暴露这个Application, 则需要使用kubernets service。** pod在kubernets的内部属于临时资源，由kubernets自己控制删除和重建，当一个Pod重建的时候，它的Internal IP address也会改变。而Service则相应的拥有一个稳定的IP地址。
+
+Kubernets Service的类型：
+
+- **ClusterIP** Services: default service type. 在一个kubernets集群中，每个worker node都会被分配到一定范围的IP地址，pod根据自身的internal IP地址来决定被分配到哪个具体的worker node上进行工作。该类型主要用于只需要在集群内部相互访问的服务。T
+  - ClusterIP is accessible only inside the cluster, no external traffic can directly address the clusterIP service. 
+- **Headless** Service：
+  - Clients want to communicate with 1 specific Pod directly.
+  - Pods want to talk directly with specific pod
+  - Use case: Stateful application, like database (e.g., mysql, oracle, mongoDB)
+- **NodePort** Service: 
+  - NodePort is an extension of ClusterIP service.
+  - Create a service that is accessible on a static port on the each worker node in the cluster. 
+  - Make the external traffic accessible on static fixed port on each worker node
+  - nodePort value has a pre-define range between 30000 - 32767
+  - **Not Secure!** Outside client could talk to the Worker Node directly. Could used for some test cases, but not for production use cases. 
+- **LoadBalancer** Service:
+  - LoadBalancer is an extension of NodePort service
+  - Become accessible externally through **cloud provider LoadBalancer**
+  - **Secure.** Should be used for production case. 
 
 ### A. [Optioanal]使用本地Terminal连接虚拟机实例（Mac OS）
 
